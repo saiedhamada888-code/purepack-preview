@@ -33,6 +33,60 @@
   window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
 
+  /* ---------------- جردل صغير بينزل مع السكرول على الجنب ---------------- */
+  (function () {
+    var wrap = document.createElement('button');
+    wrap.type = 'button';
+    wrap.className = 'scroll-bucket';
+    wrap.setAttribute('aria-label', (PP.i18n && PP.i18n.top) || 'Back to top');
+    wrap.setAttribute('title', (PP.i18n && PP.i18n.top) || 'Back to top');
+    wrap.innerHTML =
+      '<span class="sb-rail" aria-hidden="true"><i></i></span>' +
+      '<span class="sb-bucket" aria-hidden="true">' +
+        '<svg viewBox="0 0 120 130" focusable="false">' +
+          '<path d="M30 46C34 14 86 14 90 46" fill="none" stroke="#7B8794" stroke-width="6" stroke-linecap="round"/>' +
+          '<path d="M24 50L96 50L88 122Q87.5 126 83 126L37 126Q32.5 126 32 122Z" fill="#fff" stroke="#014A6D" stroke-width="5"/>' +
+          '<path d="M26.6 66L93.4 66L90.6 94L29.4 94Z" fill="#FFB600"/>' +
+          '<rect x="18" y="40" width="84" height="13" rx="4" fill="#fff" stroke="#014A6D" stroke-width="5"/>' +
+          '<g class="sb-check"><circle cx="92" cy="20" r="17" fill="#1FA855"/><path d="M83 20l7 7 12-14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>' +
+        '</svg>' +
+      '</span>';
+    document.body.appendChild(wrap);
+    var rail = wrap.querySelector('.sb-rail i');
+    var bucket = wrap.querySelector('.sb-bucket');
+    var BH = 36, cur = 0, target = 0, tilt = 0, lastY = window.scrollY || 0, trackH = 0;
+    function measure() {
+      trackH = Math.max(0, wrap.clientHeight - BH);
+      var scrollable = document.documentElement.scrollHeight - window.innerHeight > 120;
+      wrap.hidden = !scrollable;
+    }
+    function readTarget() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      target = h > 0 ? Math.min(1, Math.max(0, (window.scrollY || 0) / h)) : 0;
+    }
+    window.addEventListener('resize', function () { measure(); readTarget(); });
+    window.addEventListener('scroll', readTarget, { passive: true });
+    window.addEventListener('load', function () { measure(); readTarget(); });
+    wrap.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    });
+    measure(); readTarget();
+    (function frame() {
+      requestAnimationFrame(frame);
+      if (wrap.hidden) return;
+      cur += (target - cur) * 0.14;
+      var y = window.scrollY || 0;
+      // الجردل بيميل ناحية اتجاه السكرول وبعدين يرجع
+      tilt += ((Math.max(-1, Math.min(1, (y - lastY) / 40))) * 22 - tilt) * 0.2;
+      lastY = y;
+      var px = trackH * cur;
+      bucket.style.transform = 'translate3d(0,' + px.toFixed(1) + 'px,0) rotate(' + (reduced ? 0 : tilt.toFixed(1)) + 'deg)';
+      rail.style.height = (px + BH / 2).toFixed(1) + 'px';
+      wrap.classList.toggle('is-end', target > 0.985);
+      wrap.classList.toggle('is-top', target < 0.02);
+    })();
+  })();
+
   /* ---------------- ظهور العناصر عند النزول ---------------- */
   var revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduced) {

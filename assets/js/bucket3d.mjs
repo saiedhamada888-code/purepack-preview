@@ -110,8 +110,11 @@ export function createBucket(opts = {}) {
     group,
     parts,
     setColor(hex) {
-      const c = new THREE.Color(hex);
+      const c = hex && hex.isColor ? hex : new THREE.Color(hex);
       bodyMat.color.copy(c);
+      if (parts.lid) parts.lid.material.color.copy(c).offsetHSL(0, 0, 0.02);
+      parts.ears.forEach((e) => e.material.color.copy(c).offsetHSL(0, 0, -0.06));
+      parts.handle.forEach((h) => { if (h.material.metalness < 0.5) h.material.color.copy(c).offsetHSL(0, 0, -0.1); });
     },
     async setLabel(label) {
       if (!label) { labelMesh.visible = false; return; }

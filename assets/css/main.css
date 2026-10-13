@@ -967,3 +967,26 @@ body.nav-open { overflow: hidden; }
 html.intro-open .scroll-progress { display: none; }
 
 .form-ok { background: #E7F5EC; color: #1C6B3A; border-color: #A6DDB9; }
+
+/* جردل صغير على الجنب بينزل مع السكرول (مؤشر تقدّم + رجوع لأعلى) */
+.scroll-bucket {
+  position: fixed; z-index: 90; right: 8px; top: 92px; width: 34px; height: calc(100vh - 188px); height: calc(100svh - 188px); padding: 0; border: 0; background: none;
+  cursor: pointer; display: block; -webkit-tap-highlight-color: transparent;
+}
+.scroll-bucket[hidden] { display: none; }
+.scroll-bucket:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.sb-rail { position: absolute; top: 0; bottom: 0; left: 50%; width: 4px; margin-left: -2px; border-radius: 2px; background: rgba(1, 74, 109, .18); overflow: hidden; }
+.sb-rail i { position: absolute; top: 0; left: 0; right: 0; height: 0; border-radius: 2px; background: linear-gradient(180deg, var(--accent), #FFD566); }
+.sb-bucket { position: absolute; top: 0; left: 0; width: 34px; height: 36px; display: block; transform-origin: 50% 20%; filter: drop-shadow(0 4px 6px rgba(0, 38, 58, .35)); will-change: transform; }
+.sb-bucket svg { width: 100%; height: 100%; overflow: visible; }
+.sb-check { opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.4); transition: opacity .25s, transform .35s cubic-bezier(.3, 1.8, .5, 1); }
+.scroll-bucket.is-end .sb-check { opacity: 1; transform: scale(1); }
+.scroll-bucket.is-top .sb-rail { opacity: .6; }
+.scroll-bucket:hover .sb-bucket { filter: drop-shadow(0 6px 10px rgba(255, 182, 0, .55)); }
+html.intro-open .scroll-bucket { display: none; }
+@media (max-width: 899px) {
+  .scroll-bucket { right: 2px; width: 26px; top: 76px; height: calc(100vh - 166px); height: calc(100svh - 166px); }
+  .sb-bucket { width: 26px; height: 28px; }
+  .sb-rail { width: 3px; margin-left: -1.5px; }
+}
+@media print { .scroll-bucket { display: none; } }

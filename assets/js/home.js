@@ -87,17 +87,6 @@
       w.addEventListener('pointerleave', function () { card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); });
     });
 
-    // بارالاكس خفيف للجردل في الهيرو مع حركة الماوس
-    var hero = document.querySelector('.hero-pro');
-    var stage = document.querySelector('[data-parallax]');
-    if (hero && stage) {
-      hero.addEventListener('pointermove', function (e) {
-        var r = hero.getBoundingClientRect();
-        var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-        stage.style.transform = 'translate(' + (x * 18).toFixed(1) + 'px,' + (y * 12).toFixed(1) + 'px)';
-      });
-      hero.addEventListener('pointerleave', function () { stage.style.transform = ''; });
-    }
   }
 
   /* ---------------- معاينة الطباعة السريعة ---------------- */
