@@ -62,10 +62,17 @@
     return v.replace(/^(\+20|0020)/, '0');
   }
   function chosen() { return picks.filter(function (c) { return c.checked; }); }
+  var otherToggle = form.querySelector('[data-other-toggle]');
+  var otherBox = form.querySelector('[data-other]');
+  function otherText() { return otherToggle.checked ? otherBox.value.trim() : ''; }
+  otherToggle.addEventListener('change', function () {
+    otherBox.hidden = !otherToggle.checked;
+    if (otherToggle.checked) otherBox.focus(); else otherBox.value = '';
+  });
 
   function validate() {
     var errs = {};
-    if (!chosen().length) errs.pick = T.pick;
+    if (!chosen().length && !otherText()) errs.pick = T.pick;
     var company = form.elements.company.value.trim();
     if (company.length < 2) errs.company = company ? T.company : T.required;
     var name = form.elements.name.value.trim();
@@ -119,6 +126,7 @@
         var box = c.closest('.pick');
         lines.push('• ' + box.querySelector('.pick-name').textContent.trim() + ' (' + box.querySelector('.pick-cap').textContent.trim() + ')');
       });
+      if (otherText()) lines.push('• ' + otherText());
       lines.push('', W.customer, W.company + ': ' + form.elements.company.value.trim(), W.name + ': ' + form.elements.name.value.trim(), W.phone + ': ' + normPhone(form.elements.phone.value));
       var em = form.elements.email.value.trim(); if (em) lines.push(W.email + ': ' + em);
       var gv = form.elements.governorate; lines.push(W.gov + ': ' + gv.options[gv.selectedIndex].text);

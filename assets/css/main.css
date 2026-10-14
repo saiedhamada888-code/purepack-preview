@@ -1046,4 +1046,5 @@ html.intro-open .scroll-bucket { display: none; }
 .how-list li { display: flex; align-items: center; gap: 12px; font-size: 15px; }
 .how-list .mono { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--brand-dark); font-weight: 600; }
 .form-after { text-align: center; color: var(--text-muted); font-size: 14px; margin: 12px 0 0; }
-.pt-hide { display: none; }
+.pick-other { width: 100%; margin-top: 10px; }
+.pick-other[hidden] { display: none; }
