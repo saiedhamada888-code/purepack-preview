@@ -93,8 +93,9 @@ html.entered .hv-visual { animation: fade-up 1.1s var(--ease) .3s forwards; }
 .hv-welcome-line .k { color: var(--accent); }
 .hv-welcome-sub { margin: 2px 0 0; font-size: 14px; color: rgba(255,255,255,.75); }
 .hv-visual { position: relative; display: grid; place-items: center; min-height: 340px; }
+.hv-arch, .hv-floor { display: none; }
 .hv-arch { position: absolute; width: min(78%, 400px); aspect-ratio: 3 / 3.6; border-radius: 999px 999px 24px 24px; background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.02)); border: 1px solid rgba(255,255,255,.18); }
-.hv-bucket { position: relative; width: min(60%, 290px); height: auto; filter: drop-shadow(0 28px 28px rgba(0,0,0,.45)); }
+.hv-bucket { position: relative; width: min(92%, 520px); height: auto; filter: drop-shadow(0 28px 28px rgba(0,0,0,.45)); }
 .hv-floor { position: absolute; bottom: 4%; width: 46%; height: 6%; border-radius: 50%; background: radial-gradient(ellipse, rgba(0,0,0,.55), transparent 70%); filter: blur(4px); }
 @media (min-width: 900px) {
   .hero-v3 { padding-block: 52px 96px; }
