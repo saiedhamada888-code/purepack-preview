@@ -39,7 +39,7 @@ if (colorsBox) {
 }
 
 /* ---------------- العارض ---------------- */
-if (viewer) {
+if (viewer && !viewer.hasAttribute('data-static')) {
   const canvas = viewer.querySelector('[data-viewer-canvas]');
   const fallback = viewer.querySelector('[data-viewer-fallback]');
   const spinImg = viewer.querySelector('[data-viewer-spin]');

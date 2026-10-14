@@ -1,4 +1,4 @@
-/* بيورباك — سكريبت عام لكل الصفحات: القائمة، السلة، الكمية، الأنيميشن */
+/* بيورباك — سكريبت عام لكل الصفحات: القائمة، التمرير، الأنيميشن الهادي، التتبع */
 (function () {
   'use strict';
   var PP = window.PP || { lang: 'ar', i18n: {} };
@@ -74,10 +74,10 @@
     (function frame() {
       requestAnimationFrame(frame);
       if (wrap.hidden) return;
-      cur += (target - cur) * 0.14;
+      cur += (target - cur) * 0.12;
       var y = window.scrollY || 0;
-      // الجردل بيميل ناحية اتجاه السكرول وبعدين يرجع
-      tilt += ((Math.max(-1, Math.min(1, (y - lastY) / 40))) * 22 - tilt) * 0.2;
+      // الجردل بيميل شوية ناحية اتجاه السكرول وبعدين يرجع
+      tilt += ((Math.max(-1, Math.min(1, (y - lastY) / 50))) * 14 - tilt) * 0.18;
       lastY = y;
       var px = trackH * cur;
       bucket.style.transform = 'translate3d(0,' + px.toFixed(1) + 'px,0) rotate(' + (reduced ? 0 : tilt.toFixed(1)) + 'deg)';
@@ -95,10 +95,10 @@
         if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    revealEls.forEach(function (el, i) {
+    revealEls.forEach(function (el) {
       // تأخير بسيط متتابع للعناصر اللي جنب بعض
       var sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
-      el.style.transitionDelay = Math.min(sib, 5) * 70 + 'ms';
+      el.style.transitionDelay = Math.min(sib, 5) * 80 + 'ms';
       io.observe(el);
     });
     // أمان: لو حاجة فضلت مخفية بعد ٣ ثواني تظهر
@@ -107,85 +107,14 @@
     revealEls.forEach(function (el) { el.classList.add('is-in'); });
   }
 
-  /* ---------------- السلة (localStorage) ---------------- */
-  var KEY = 'pp_cart_v1';
-  var Cart = {
-    read: function () {
-      try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; }
-      catch (e) { return []; }
-    },
-    write: function (items) {
-      try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) { /* التخزين مقفول */ }
-      Cart.render();
-      document.dispatchEvent(new CustomEvent('pp:cart', { detail: items }));
-    },
-    add: function (p, qty) {
-      var items = Cart.read();
-      var key = p.id + '|' + (p.color || '');
-      var found = items.find(function (i) { return i.key === key; });
-      if (found) found.qty += qty;
-      else items.push({ key: key, id: p.id, slug: p.slug, ar: p.ar, en: p.en, cap: p.cap, min: p.min || 0, img: p.img || '', color: p.color || '', colorAr: p.colorAr || '', colorEn: p.colorEn || '', qty: qty });
-      Cart.write(items);
-    },
-    count: function () { return Cart.read().length; },
-    render: function () {
-      var n = Cart.count();
-      document.querySelectorAll('[data-cart-count]').forEach(function (el) {
-        el.textContent = n;
-        el.hidden = n === 0;
-        el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
-      });
-    }
-  };
-  window.PPCart = Cart;
-  Cart.render();
-  window.addEventListener('storage', function (e) { if (e.key === KEY) Cart.render(); });
-
-  /* ---------------- اختيار الكمية ---------------- */
-  function clampQty(input) {
-    var min = parseInt(input.min, 10) || 1;
-    var v = parseInt(String(input.value).replace(/[^\d]/g, ''), 10);
-    if (!v || v < min) v = min;
-    input.value = v;
-    return v;
-  }
-  function stepFor(v) { return v >= 1000 ? 100 : v >= 100 ? 50 : 10; }
-
-  document.addEventListener('click', function (e) {
-    var dec = e.target.closest('[data-qty-dec]');
-    var inc = e.target.closest('[data-qty-inc]');
-    if (dec || inc) {
-      var input = (dec || inc).closest('[data-qty]').querySelector('[data-qty-input]');
-      var v = parseInt(input.value, 10) || 0;
-      var min = parseInt(input.min, 10) || 1;
-      var s = stepFor(inc ? v : Math.max(v - 1, 0));
-      input.value = inc ? (Math.floor(v / s) + 1) * s : Math.max(min, (Math.ceil(v / s) - 1) * s);
-      clampQty(input);
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-      return;
-    }
-
-    var addBtn = e.target.closest('[data-add-cart]');
-    var orderBtn = e.target.closest('[data-order-now]');
-    if (addBtn || orderBtn) {
-      var card = (addBtn || orderBtn).closest('[data-product]');
-      if (!card) return;
-      var p; try { p = JSON.parse(card.getAttribute('data-product')); } catch (err) { return; }
-      var q = card.querySelector('[data-qty-input]');
-      var qty = q ? clampQty(q) : (p.min || 1);
-      var sel = card.querySelector('[data-color-selected]');
-      if (sel) { p.color = sel.getAttribute('data-hex'); p.colorAr = sel.getAttribute('data-name-ar'); p.colorEn = sel.getAttribute('data-name-en'); }
-      Cart.add(p, qty);
-      track(orderBtn ? 'InitiateCheckout' : 'AddToCart', { content_name: p.en, content_ids: [String(p.id)], num_items: qty });
-      if (orderBtn) { window.location.href = PP.orderUrl; }
-      else toast(PP.i18n.added || 'Added');
-    }
-  });
-  document.addEventListener('change', function (e) { if (e.target.matches('[data-qty-input]')) clampQty(e.target); });
-
   /* ---------------- Meta Pixel ---------------- */
   function track(ev, data) { if (PP.pixel && typeof window.fbq === 'function') window.fbq('track', ev, data || {}); }
   window.PPTrack = track;
+  // أي زرار/رابط "اطلب الآن" بيسجّل حدث
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-track="order"]');
+    if (a) track('InitiateCheckout', { content_name: a.getAttribute('data-track-name') || '' });
+  });
 
   /* ---------------- رسالة صغيرة (toast) ---------------- */
   var toastEl, toastTimer;
