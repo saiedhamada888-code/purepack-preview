@@ -46,9 +46,9 @@
         '<svg viewBox="0 0 120 130" focusable="false">' +
           '<path d="M30 46C34 14 86 14 90 46" fill="none" stroke="#7B8794" stroke-width="6" stroke-linecap="round"/>' +
           '<path d="M24 50L96 50L88 122Q87.5 126 83 126L37 126Q32.5 126 32 122Z" fill="#fff" stroke="#014A6D" stroke-width="5"/>' +
-          '<path d="M26.6 66L93.4 66L90.6 94L29.4 94Z" fill="#FFB600"/>' +
+          '<path d="M26.6 66L93.4 66L90.6 94L29.4 94Z" fill="#DEA80A"/>' +
           '<rect x="18" y="40" width="84" height="13" rx="4" fill="#fff" stroke="#014A6D" stroke-width="5"/>' +
-          '<g class="sb-check"><circle cx="92" cy="20" r="17" fill="#1FA855"/><path d="M83 20l7 7 12-14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>' +
+          '<g class="sb-check"><circle cx="92" cy="20" r="17" fill="#014A6D"/><path d="M83 20l7 7 12-14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>' +
         '</svg>' +
       '</span>';
     document.body.appendChild(wrap);
