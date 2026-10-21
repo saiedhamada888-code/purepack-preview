@@ -18,7 +18,11 @@
     thumb.style.transform = 'translateX(' + on.offsetLeft + 'px)';
   }
 
+  function visibleCells() { return [].slice.call(root.querySelectorAll('.p-cell')).filter(function (c) { return !c.hidden && c.offsetParent !== null; }); }
+
   function apply(animate) {
+    var before = new Map();
+    if (animate && !reduced) visibleCells().forEach(function (c) { before.set(c, c.getBoundingClientRect()); });
     var term = (q.value || '').trim().toLowerCase();
     var shown = 0;
     groups.forEach(function (g) {
@@ -33,18 +37,27 @@
       g.hidden = !inTab || !vis;
       if (!g.hidden) {
         shown += vis;
-        if (animate && !reduced) {
-          [].forEach.call(g.querySelectorAll('.p-cell:not([hidden])'), function (c, i) {
-            c.classList.remove('cell-pop');
-            void c.offsetWidth;
-            c.classList.add('is-in');
-            c.style.setProperty('--i', Math.min(i, 10));
-            c.classList.add('cell-pop');
-          });
-        }
       }
     });
     none.hidden = shown > 0;
+    if (animate && !reduced) flip(before);
+  }
+
+  // FLIP: اللي كان ظاهر بيتحرك لمكانه الجديد، واللي جديد بيدخل بحركة
+  function flip(before) {
+    var i = 0;
+    visibleCells().forEach(function (c) {
+      var now = c.getBoundingClientRect(), was = before.get(c), card = c.firstElementChild;
+      c.classList.add('is-in');
+      var delay = Math.min(i++, 14) * 40;
+      if (was) {
+        var dx = was.left - now.left, dy = was.top - now.top;
+        if (Math.abs(dx) + Math.abs(dy) < 2) return;
+        c.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 650, delay: delay, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+      } else {
+        c.animate([{ opacity: 0, transform: 'translateY(34px) scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 650, delay: delay, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+      }
+    });
   }
 
   btns.forEach(function (b) {
