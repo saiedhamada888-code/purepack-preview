@@ -72,6 +72,58 @@
     counters.forEach(function (c) { cio.observe(c); });
   }
 
+  /* ---------------- عرض الهيرو: تبديل ناعم للمنتجات ---------------- */
+  var show = document.querySelector('[data-hero-show]');
+  if (show) {
+    var sl = [].slice.call(show.querySelectorAll('.hv-slide')), dots = [].slice.call(show.querySelectorAll('.hv-dots i')), si = 0, st = null;
+    var go = function (n) {
+      si = (n + sl.length) % sl.length;
+      sl.forEach(function (s, k) { s.classList.toggle('is-on', k === si); });
+      dots.forEach(function (d, k) { d.classList.toggle('is-on', k === si); });
+    };
+    var start = function () { if (!reduced && sl.length > 1) st = setInterval(function () { go(si + 1); }, 3800); };
+    show.addEventListener('pointerenter', function () { clearInterval(st); });
+    show.addEventListener('pointerleave', start);
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { go(k); }); });
+    start();
+  }
+
+  /* ---------------- شريط الصور: بيتحرك لوحده وبيسرّع مع السكرول ---------------- */
+  var mq = document.querySelector('[data-mq]');
+  if (mq && !reduced) {
+    var rowsEl = [].slice.call(mq.querySelectorAll('.mq-row')).map(function (r) {
+      return { t: r.querySelector('.mq-track'), dir: parseInt(r.getAttribute('data-dir'), 10), x: 0, half: 0 };
+    });
+    var measure = function () { rowsEl.forEach(function (r) { r.half = r.t.scrollWidth / 2; if (r.dir > 0) r.x = -r.half; }); };
+    measure(); window.addEventListener('resize', measure); window.addEventListener('load', measure);
+    var lastY = window.scrollY, boost = 0, vis = true;
+    new IntersectionObserver(function (e) { vis = e[0].isIntersecting; }).observe(mq);
+    (function loop() {
+      requestAnimationFrame(loop);
+      var y = window.scrollY; boost += (Math.abs(y - lastY) - boost) * 0.1; lastY = y;
+      if (!vis) return;
+      var sp = 0.5 + Math.min(boost, 40) * 0.35;
+      rowsEl.forEach(function (r) {
+        if (!r.half) return;
+        r.x += r.dir * sp * -1;
+        if (r.x <= -r.half) r.x += r.half; if (r.x > 0) r.x -= r.half;
+        r.t.style.transform = 'translate3d(' + r.x.toFixed(1) + 'px,0,0)';
+      });
+    })();
+  }
+
+  /* ---------------- ميلان كروت المنتجات مع الماوس ---------------- */
+  if (!reduced && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.kind').forEach(function (k) {
+      k.addEventListener('pointermove', function (e) {
+        var r = k.getBoundingClientRect();
+        k.style.setProperty('--mx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+        k.style.setProperty('--my', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+      });
+      k.addEventListener('pointerleave', function () { k.style.setProperty('--mx', 0); k.style.setProperty('--my', 0); });
+    });
+  }
+
   /* ---------------- رأيك يهمنا ---------------- */
   var form = document.querySelector('[data-feedback]');
   if (form) {
