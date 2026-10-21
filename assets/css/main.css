@@ -1148,21 +1148,19 @@ html.intro-open .scroll-bucket { display: none; }
 .rev-float { left: auto; right: 10px; bottom: 12px; }
 @media (max-width: 480px) { .rev-float { left: auto; right: 6px; } .rev-ic { width: 50px; height: 50px; } }
 
-/* الموبايل: 3 منتجات جنب بعض */
+/* الموبايل: منتجين جنب بعض */
 @media (max-width: 559px) {
-  .p-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .p-card { border-radius: 10px; }
-  .p-card-media { aspect-ratio: 1 / 1.15; }
-  .p-card-media img { inset: 0 0 34px 0; height: calc(100% - 34px); }
-  .p-card-media::before { height: 34px; }
-  .p-card-media::after { bottom: 34px; }
-  .p-card-media .p-badge { inset-inline: 4px; bottom: 4px; padding: 3px 2px; font-size: 10px; line-height: 1.25; border-radius: 3px; box-shadow: none; }
-  .p-card-media .tag { display: none; }
-  .p-card-media .p-img-logo, .p-card-media > .tag-usage { display: none; }
-  .p-card-body { padding: 8px 6px 8px; }
-  .p-specs { display: none; }
-  .p-card-cta { min-height: 32px; padding: 6px 4px; font-size: 11px; gap: 2px; border-radius: 6px; }
-  .p-card-cta .ic { width: 12px; height: 12px; }
-  .cat-group-head .section-title { font-size: 22px; }
+  .p-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .p-card { border-radius: 12px; }
+  .p-card-media { aspect-ratio: 1 / 1.1; }
+  .p-card-media img { inset: 0 0 42px 0; height: calc(100% - 42px); }
+  .p-card-media::before { height: 42px; }
+  .p-card-media::after { bottom: 42px; }
+  .p-card-media .p-badge { inset-inline: 6px; bottom: 6px; padding: 5px 4px; font-size: 12px; line-height: 1.25; box-shadow: none; }
+  .p-card-media .tag { font-size: 10px; padding: 1px 6px; top: 6px; }
+  .p-card-body { padding: 8px 10px 10px; }
+  .p-spec { font-size: 11.5px; padding: 6px 0; }
+  .p-specs { margin-bottom: 10px; }
+  .p-card-cta { min-height: 38px; padding: 8px 6px; font-size: 13px; }
   .p-card:hover { transform: none; }
 }
